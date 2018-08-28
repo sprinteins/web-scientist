@@ -7,20 +7,18 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
+	"os"
 )
 
 // Server _
 type Server struct {
-	host      string
-	port      string
-	stop      chan bool
-	targetOne *url.URL
-	targetTwo *url.URL
-	proxyOne  *httputil.ReverseProxy
-	proxyTwo  *httputil.ReverseProxy
-	server    http.Server
+	host       string
+	port       string
+	stop       chan os.Signal
+	reference  *url.URL
+	experiment *url.URL
+	server     http.Server
 }
 
 // New _
@@ -28,7 +26,7 @@ func New(host string, port string) (s *Server) {
 	return &Server{
 		host: host,
 		port: port,
-		stop: make(chan bool),
+		stop: make(chan os.Signal, 1),
 	}
 }
 
@@ -42,56 +40,63 @@ func (s *Server) Start() {
 	mux.HandleFunc("/", s.handle)
 
 	go func() {
-		log.Fatal(s.server.ListenAndServe())
+		s.waitForStop(&s.stop, &s.server)
 	}()
 
-	s.waitForStop(&s.stop, &s.server)
+	log.Fatal(s.server.ListenAndServe())
+}
+
+// Address _
+func (s *Server) Address() string {
+	return fmt.Sprintf("http://%s:%s", s.host, s.port)
 }
 
 // Stop _
 func (s *Server) Stop() {
-	s.stop <- true
+	s.stop <- os.Interrupt
 }
 
-// SetTargetOne _
-func (s *Server) SetTargetOne(target string) {
-	s.targetOne, _ = url.Parse(target)
-	s.proxyOne = httputil.NewSingleHostReverseProxy(s.targetOne)
+// SetReference _
+func (s *Server) SetReference(target string) {
+	s.reference, _ = url.Parse(target)
 }
 
-// SetTargetTwo _
-func (s *Server) SetTargetTwo(target string) {
-	s.targetTwo, _ = url.Parse(target)
-	s.proxyTwo = httputil.NewSingleHostReverseProxy(s.targetTwo)
+// SetExperiment _
+func (s *Server) SetExperiment(target string) {
+	s.experiment, _ = url.Parse(target)
 }
 
+// TODO
+// make the calls on two threads and wait for both
 func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("X-WebScientist", "WebScientist")
 
-	var reqOne, reqTwo = duplicate(req)
+	var reqRef, reqExp = duplicate(req)
 
-	resp, err := sendFurther(reqOne, s.targetOne)
+	resp, err := sendFurther(reqRef, s.reference)
 	if err != nil {
 		log.Fatal(err)
 	}
-	payloadOne, err := bodyToString(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	resp, err = sendFurther(reqTwo, s.targetTwo)
-	if err != nil {
-		log.Fatal(err)
-	}
-	payloadTwo, err := bodyToString(resp.Body)
+	payloadRef, err := bodyToString(resp.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if payloadOne != payloadTwo {
-		fmt.Fprintf(w, payloadOne)
+	resp, err = sendFurther(reqExp, s.experiment)
+	if err != nil {
+		log.Fatal(err)
+	}
+	payloadExp, err := bodyToString(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if payloadRef != payloadExp {
+		w.Header().Set("X-web-scientist-type", "reference")
+		fmt.Fprintf(w, payloadRef)
 	} else {
-		fmt.Fprintf(w, payloadTwo)
+		w.Header().Set("X-web-scientist-type", "experiment")
+		fmt.Fprintf(w, payloadExp)
 
 	}
 
@@ -149,7 +154,11 @@ func duplicate(request *http.Request) (request1 *http.Request, request2 *http.Re
 	return
 }
 
-func (s *Server) waitForStop(stop *chan bool, server *http.Server) {
+func (s *Server) waitForStop(stop *chan os.Signal, server *http.Server) {
 	<-s.stop
-	s.server.Shutdown(nil)
+	err := s.server.Shutdown(nil)
+	if err != nil {
+		log.Fatal(s.server.Addr)
+		log.Fatal(err)
+	}
 }

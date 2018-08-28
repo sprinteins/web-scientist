@@ -2,16 +2,13 @@ package server_test
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/trusz/web-scientist/server"
-	"github.com/trusz/web-scientist/server/mock"
+	. "github.com/trusz/web-scientist/server/test_helpers"
 )
 
 const PROTOCOL = "http"
@@ -37,47 +34,57 @@ func teardown() {
 	scientist.Stop()
 }
 
-func TestDiffernceIsDetected(t *testing.T) {
+func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 
-	var toUpper = mock.New("localhost", "9999", 0)
-	var toLower = mock.New("localhost", "9998", 10)
+	var reference, experiment = CreateNonEqualMocks()
 
-	// defer toUpper.Stop()
-	go toUpper.Start(nil)
-	// defer toLower.Stop()
-	go toLower.Start(toLowerCase)
-
-	scientist.SetTargetOne("http://localhost:9999")
-	scientist.SetTargetTwo("http://localhost:9998")
-	var url = fmt.Sprintf("%s://%s:%s", PROTOCOL, HOST, PORT)
+	scientist.SetReference(reference.Address())
+	scientist.SetExperiment(experiment.Address())
 
 	var message = "TeSt"
 	var payload = []byte(message)
 
-	var resp, err = http.Post(url, "text/plain", bytes.NewBuffer(payload))
-	if err != nil {
-		t.Fail()
-		log.Fatal(err)
-	}
+	var resp, err = http.Post(scientist.Address(), "text/plain", bytes.NewBuffer(payload))
+	Ok(t, err)
+
+	var header = resp.Header.Get("X-web-scientist-type")
+	Equals(t, "reference", header)
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		t.Fail()
-		log.Fatal(err)
-	}
+	Ok(t, err)
 
 	var respPayload = string(body)
-	if message != respPayload {
-		t.Fail()
-		log.Fatal(fmt.Sprintf("_%s_ != _%s_", message, respPayload))
-	}
+	Equals(t, respPayload, message)
+
+	reference.Stop()
+	experiment.Stop()
+
 }
 
-func toUpperCase(text string) string {
-	return strings.ToUpper(text)
-}
+func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 
-func toLowerCase(text string) string {
-	return strings.ToLower(text)
+	var reference, experiment = CreateEqualMocks()
+
+	scientist.SetReference(reference.Address())
+	scientist.SetExperiment(experiment.Address())
+
+	var message = "TeSt"
+	var payload = []byte(message)
+
+	var resp, err = http.Post(scientist.Address(), "text/plain", bytes.NewBuffer(payload))
+	Ok(t, err)
+
+	var header = resp.Header.Get("X-web-scientist-type")
+	Equals(t, "experiment", header)
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	Ok(t, err)
+
+	var respPayload = string(body)
+	Equals(t, respPayload, message)
+
+	reference.Stop()
+	experiment.Stop()
 }

@@ -1,0 +1,32 @@
+settings:
+    legacy:
+        force: false
+        interval: 0s
+    server:
+        status: false
+        open: false
+        port: 5002
+host: localhost
+schema:
+- name: web-scientist
+  path: .
+  commands:
+        fmt:
+            status: true
+            args:
+            - -s
+            - -w
+        test:
+            status: true
+            args:
+            - -v
+  watcher:
+        paths:
+        - /
+        - /server
+        extensions:
+        - go
+        ignored_paths:
+        - .git
+        - .realize
+        - vendor
