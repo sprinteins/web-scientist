@@ -66,8 +66,8 @@ func (s *Server) SetExperiment(target string) {
 	s.experiment, _ = url.Parse(target)
 }
 
-// TODO
-// make the calls on two threads and wait for both
+// TODO:
+// make the calls parallel
 func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("X-WebScientist", "WebScientist")
 

@@ -17,6 +17,6 @@ services:
     tty: true
     volumes:
       - .:/app
-    command: ["sh","-c","cd /app && realize start"]
+    command: ["sh","-c","cd /app/src && realize start"]
     networks:
       - web-scientist
