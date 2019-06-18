@@ -5,7 +5,7 @@ networks:
 services:
   web-scientist:
     build: .
-    image: "docker.sprinteins.com/users/trusz/web-scientist:v1.0.0"
+    image: "docker.sprinteins.com/users/sprinteins/web-scientist:v1.0.0"
     
   web-scientist-dev:
     build: 

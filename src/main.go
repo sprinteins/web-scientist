@@ -4,7 +4,8 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/trusz/web-scientist/server"
+	server "github.com/sprinteins/web-scientist/server"
+	"github.com/sprinteins/web-scientist/utils"
 )
 
 func main() {
@@ -12,6 +13,8 @@ func main() {
 	var port = flag.String("port", "7654", "The port")
 	var reference = flag.String("reference", "", "The reference service")
 	var experiment = flag.String("experiment", "", "The experiment service")
+
+	utils.TellMeMore()
 
 	flag.Parse()
 	fmt.Printf("listening on http://%s:%s\n", *host, *port)
@@ -22,4 +25,6 @@ func main() {
 	scientist.SetReference(*reference)
 	scientist.SetExperiment(*experiment)
 	scientist.Start()
+
+	
 }

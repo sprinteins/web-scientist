@@ -36,7 +36,6 @@ func (s *Server) Start() {
 	var address = fmt.Sprintf("%s:%s", s.host, s.port)
 	var mux = http.NewServeMux()
 	s.server = http.Server{Addr: address, Handler: mux}
-
 	mux.HandleFunc("/", s.handle)
 
 	go func() {
