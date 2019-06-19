@@ -26,5 +26,4 @@ func main() {
 	scientist.SetExperiment(*experiment)
 	scientist.Start()
 
-	
 }
