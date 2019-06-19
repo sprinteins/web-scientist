@@ -4,7 +4,7 @@ The Go service that helps you refactor and monitor the refactoring of critical R
 
 ## Get it go-ing
 
-To use the Web Scientist download docker and run the following command in a CLI of your choice
+To use the Web Scientist download docker and run the following command.
 
 ```
 $ docker run docker.sprinteins.com/users/trusz/web-scientist:v1.0.0
