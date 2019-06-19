@@ -8,12 +8,10 @@ COPY . .
 RUN go mod download
 RUN go build -o web-scientist src/main.go
 
-FROM alpine:3.8 AS runner
+FROM alpine:3.9 AS runner
 
 WORKDIR /app
 
 COPY --from=builder /app/web-scientist /app
 
-EXPOSE 7070
-
-CMD ["go" , "run", "./web-scientist"]
+CMD ["./web-scientist"]
