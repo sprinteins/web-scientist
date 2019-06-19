@@ -1,4 +1,4 @@
-package test_helpers
+package testHelpers
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/trusz/web-scientist/server/mock"
+	"github.com/sprinteins/web-scientist/server/mock"
 )
 
 // Assert fails the test if the condition is false.

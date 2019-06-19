@@ -5,6 +5,10 @@ networks:
 services:
   web-scientist:
     build: .
+<<<<<<< HEAD
+=======
+    image: "sprinteins/web-scientist"
+>>>>>>> master
     
   web-scientist-dev:
     build: 
