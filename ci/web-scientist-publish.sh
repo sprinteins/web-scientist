@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker push web-scientist
+docker push sprinteins/web-scientist
