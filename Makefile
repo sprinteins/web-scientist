@@ -4,5 +4,5 @@ dev:
 publish:
 	./ci/web-scientist-publish.sh
 
-prod:
-	./ci/web-scientist-prod.sh
+build:
+	./ci/web-scientist-build.sh
