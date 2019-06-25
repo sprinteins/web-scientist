@@ -58,13 +58,13 @@ func BodyToString(body io.ReadCloser) (string, error) {
 
 // CompareStatus _
 func (JL *JLog) CompareStatus(statusA string, statusB string) {
-	
+
 	if statusA == statusB {
 		JL.Identical["Status"] = true
 	} else {
 		JL.Identical["Status"] = false
 	}
-		
+
 	m := make(map[string]string)
 	m["RefResponse"] = statusA
 	m["ExpResponse"] = statusB
@@ -92,7 +92,12 @@ func (JL *JLog) CompareHeader(headerA map[string][]string, headerB map[string][]
 
 	for key, value := range headerA {
 		for i, str := range value {
-			if str != headerB[key][i] {
+			if headerB[key] != nil {
+				if str != headerB[key][i] {
+					isIdentical = false
+					break
+				}
+			} else {
 				isIdentical = false
 				break
 			}
