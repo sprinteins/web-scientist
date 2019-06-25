@@ -28,21 +28,21 @@ func New() *JLog {
 }
 
 // CompareResponses _
-func (JL *JLog) CompareResponses(refResp *http.Response, expResp *http.Response) (string, error) {
+func (JL *JLog) CompareResponses(refResp *http.Response, expResp *http.Response) ([]byte, error) {
 
 	JL.CompareStatus(refResp.Status, expResp.Status)
 	JL.CompareProto(refResp.Proto, expResp.Proto)
 	JL.CompareHeader(refResp.Header, expResp.Header)
 	err := JL.CompareBody(refResp.Body, expResp.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	str, err := json.Marshal(JL)
+	str, err := json.MarshalIndent(JL, "", " ")
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(str), nil
+	return str, nil
 }
 
 // BodyToString _
@@ -74,7 +74,7 @@ func (JL *JLog) CompareStatus(statusA string, statusB string) {
 // CompareProto _
 func (JL *JLog) CompareProto(protoA string, protoB string) {
 	if protoA == protoB {
-		JL.Identical["Proto"] = false
+		JL.Identical["Proto"] = true
 	} else {
 		JL.Identical["Proto"] = false
 	}
@@ -120,7 +120,7 @@ func (JL *JLog) CompareBody(bodyA io.ReadCloser, bodyB io.ReadCloser) error {
 	}
 
 	if bodyAStr == bodyBStr {
-		JL.Identical["Body"] = false
+		JL.Identical["Body"] = true
 	} else {
 		JL.Identical["Body"] = false
 	}
