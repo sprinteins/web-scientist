@@ -73,32 +73,19 @@ func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 
 	var reqRef, reqExp = duplicate(req)
 
-	resp, err := sendFurther(reqRef, s.reference)
-	if err != nil {
-		log.Fatal(err)
-	}
-	payloadRef, err := bodyToString(resp.Body)
+	respA, err := sendFurther(reqRef, s.reference)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	resp, err = sendFurther(reqExp, s.experiment)
-	if err != nil {
-		log.Fatal(err)
-	}
-	payloadExp, err := bodyToString(resp.Body)
+	respB, err := sendFurther(reqExp, s.experiment)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if payloadRef != payloadExp {
-		w.Header().Set("X-web-scientist-type", "reference")
-		fmt.Fprintf(w, payloadRef)
-	} else {
-		w.Header().Set("X-web-scientist-type", "experiment")
-		fmt.Fprintf(w, payloadExp)
+	JL := jlog.New()
 
-	}
+	fmt.Println(JL.CompareResponses(respA, respB))
 
 }
 

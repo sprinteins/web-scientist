@@ -17,9 +17,18 @@ type JLog struct {
 }
 
 // New _
-func CompareResponses(refResp *http.Response, expResp *http.Response) (string, error) {
+func New() *JLog {
+	return &JLog{
+		make(map[string]string),
+		make(map[string]string),
+		make(map[string]map[string][]string),
+		make(map[string]string),
+		make(map[string]bool),
+	}
+}
 
-	JL := new(JLog)
+// CompareResponses _
+func (JL *JLog) CompareResponses(refResp *http.Response, expResp *http.Response) (string, error) {
 
 	JL.CompareStatus(refResp.Status, expResp.Status)
 	JL.CompareProto(refResp.Proto, expResp.Proto)
@@ -48,14 +57,14 @@ func BodyToString(body io.ReadCloser) (string, error) {
 }
 
 // CompareStatus _
-func (JL JLog) CompareStatus(statusA string, statusB string) {
-
+func (JL *JLog) CompareStatus(statusA string, statusB string) {
+	
 	if statusA == statusB {
 		JL.Identical["Status"] = true
 	} else {
 		JL.Identical["Status"] = false
 	}
-
+		
 	m := make(map[string]string)
 	m["RefResponse"] = statusA
 	m["ExpResponse"] = statusB
@@ -63,7 +72,7 @@ func (JL JLog) CompareStatus(statusA string, statusB string) {
 }
 
 // CompareProto _
-func (JL JLog) CompareProto(protoA string, protoB string) {
+func (JL *JLog) CompareProto(protoA string, protoB string) {
 	if protoA == protoB {
 		JL.Identical["Proto"] = false
 	} else {
@@ -77,7 +86,7 @@ func (JL JLog) CompareProto(protoA string, protoB string) {
 }
 
 // CompareHeader _
-func (JL JLog) CompareHeader(headerA map[string][]string, headerB map[string][]string) {
+func (JL *JLog) CompareHeader(headerA map[string][]string, headerB map[string][]string) {
 
 	isIdentical := true
 
@@ -99,19 +108,27 @@ func (JL JLog) CompareHeader(headerA map[string][]string, headerB map[string][]s
 }
 
 // CompareBody _
-func (JL JLog) CompareBody(bodyA io.ReadCloser, bodyB io.ReadCloser) error {
+func (JL *JLog) CompareBody(bodyA io.ReadCloser, bodyB io.ReadCloser) error {
 	bodyAStr, err := BodyToString(bodyA)
 	if err != nil {
 		return err
 	}
+
 	bodyBStr, err := BodyToString(bodyB)
 	if err != nil {
 		return err
+	}
+
+	if bodyAStr == bodyBStr {
+		JL.Identical["Body"] = false
+	} else {
+		JL.Identical["Body"] = false
 	}
 
 	m := make(map[string]string)
 	m["RefResponse"] = bodyAStr
 	m["ExpResponse"] = bodyBStr
 	JL.Body = m
+
 	return nil
 }
