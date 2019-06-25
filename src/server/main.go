@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"github.com/sprinteins/web-scientist/server/jlog"
 )
 
 // Server _
@@ -108,16 +109,6 @@ func sendFurther(req *http.Request, url *url.URL) (*http.Response, error) {
 		return nil, err
 	}
 	return resp, nil
-}
-
-func bodyToString(body io.ReadCloser) (string, error) {
-	defer body.Close()
-	payload, err := ioutil.ReadAll(body)
-	if err != nil {
-		return "", err
-	}
-
-	return string(payload), nil
 }
 
 func duplicate(request *http.Request) (request1 *http.Request, request2 *http.Request) {
