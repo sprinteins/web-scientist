@@ -84,8 +84,8 @@ func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 	}
 
 	JL := jlog.New()
-
-	fmt.Println(JL.CompareResponses(respA, respB))
+	out, _ := JL.CompareResponses(respA, respB)
+	ioutil.WriteFile("log.json", out, 0755)
 
 }
 
