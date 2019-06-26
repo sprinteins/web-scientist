@@ -47,7 +47,6 @@ func (JL *JLog) CompareResponses(refResp *http.Response, expResp *http.Response)
 
 // BodyToString _
 func BodyToString(body io.ReadCloser) (string, error) {
-	defer body.Close()
 	payload, err := ioutil.ReadAll(body)
 	if err != nil {
 		return "", err

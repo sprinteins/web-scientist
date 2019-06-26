@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sync"
 	"github.com/sprinteins/web-scientist/server/jlog"
 )
 
@@ -71,31 +72,73 @@ func (s *Server) SetExperiment(target string) {
 func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("X-WebScientist", "WebScientist")
 
+	wg := sync.WaitGroup{}
+
+	refRespCh := make(chan *http.Response)
+	defer close(refRespCh)
+	expRespCh := make(chan *http.Response)
+	defer close(expRespCh)
+	
+	doneCh := make(chan struct{})
+
 	var reqRef, reqExp = duplicate(req)
 
-	respA, err := sendFurther(reqRef, s.reference)
-	if err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+		err := sendFurther(refRespCh, reqRef, s.reference)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+	
+	go func() {
+		err := sendFurther(expRespCh, reqExp, s.experiment)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+	
+	refResponse := &http.Response{}
 
-	respB, err := sendFurther(reqExp, s.experiment)
-	if err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+		refResponse = <-refRespCh
+		refBodyStr, err := jlog.BodyToString(refResponse.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Fprintln(w, refBodyStr)
+		doneCh <- struct{}{}
+	}()
 
-	JL := jlog.New()
-	out, _ := JL.CompareResponses(respA, respB)
-	ioutil.WriteFile("log.json", out, 0755)
+	wg.Add(1)
+	go func() {
+		<-doneCh
+		expResponse := <-expRespCh
+		
+		JL := jlog.New()
 
+		out, err := JL.CompareResponses(refResponse, expResponse)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer expResponse.Body.Close()
+		defer refResponse.Body.Close()
+		
+		ioutil.WriteFile("log.json", out, 0755)
+		
+		wg.Done()
+	}()
+
+	wg.Wait()
 }
 
-func sendFurther(req *http.Request, url *url.URL) (*http.Response, error) {
+func sendFurther(respChannel chan<- *http.Response, req *http.Request, url *url.URL) error {
 	req.URL = url
 	resp, err := http.DefaultTransport.RoundTrip(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return resp, nil
+	respChannel <- resp
+	return nil
 }
 
 func duplicate(request *http.Request) (request1 *http.Request, request2 *http.Request) {
