@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"github.com/sprinteins/web-scientist/server/difference"
 )
 
 // Server _
@@ -72,32 +73,19 @@ func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 
 	var reqRef, reqExp = duplicate(req)
 
-	resp, err := sendFurther(reqRef, s.reference)
-	if err != nil {
-		log.Fatal(err)
-	}
-	payloadRef, err := bodyToString(resp.Body)
+	respA, err := sendFurther(reqRef, s.reference)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	resp, err = sendFurther(reqExp, s.experiment)
-	if err != nil {
-		log.Fatal(err)
-	}
-	payloadExp, err := bodyToString(resp.Body)
+	respB, err := sendFurther(reqExp, s.experiment)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if payloadRef != payloadExp {
-		w.Header().Set("X-web-scientist-type", "reference")
-		fmt.Fprintf(w, payloadRef)
-	} else {
-		w.Header().Set("X-web-scientist-type", "experiment")
-		fmt.Fprintf(w, payloadExp)
-
-	}
+	diff := difference.New()
+	out, _ := diff.CompareResponses(respA, respB)
+	ioutil.WriteFile("log.json", out, 0755)
 
 }
 
@@ -108,16 +96,6 @@ func sendFurther(req *http.Request, url *url.URL) (*http.Response, error) {
 		return nil, err
 	}
 	return resp, nil
-}
-
-func bodyToString(body io.ReadCloser) (string, error) {
-	defer body.Close()
-	payload, err := ioutil.ReadAll(body)
-	if err != nil {
-		return "", err
-	}
-
-	return string(payload), nil
 }
 
 func duplicate(request *http.Request) (request1 *http.Request, request2 *http.Request) {
