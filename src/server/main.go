@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"os"
 	"sync"
-	"github.com/sprinteins/web-scientist/server/jlog"
+	"github.com/sprinteins/web-scientist/server/difference"
 )
 
 // Server _
@@ -106,7 +106,7 @@ func sendFurther(respChannel chan<- *http.Response, req *http.Request, url *url.
 
 func returnReferenceResponse( doneCh chan<- struct{}, w http.ResponseWriter, refRespCh chan *http.Response ) *http.Response {
 	refResponse := <-refRespCh
-	refBodyStr, err := jlog.BodyToString(refResponse.Body)
+	refBodyStr, err := difference.BodyToString(refResponse.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -119,9 +119,9 @@ func returnReferenceResponse( doneCh chan<- struct{}, w http.ResponseWriter, ref
 func compareResponses( expRespCh <-chan *http.Response, refResponse *http.Response ) {
 	expResponse := <-expRespCh
 
-	JL := jlog.New()
+	diff := difference.New()
 	
-	out, err := JL.CompareResponses(refResponse, expResponse)
+	out, err := diff.CompareResponses(refResponse, expResponse)
 	if err != nil {
 		log.Fatal(err)
 	}
