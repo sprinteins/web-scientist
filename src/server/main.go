@@ -74,6 +74,7 @@ func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 
 	wg := sync.WaitGroup{}
 	refResponse := &http.Response{}
+
 	refRespCh, expRespCh, doneCh := makeChannels()
 	defer closeChannels(refRespCh, expRespCh, doneCh)
 	
@@ -81,11 +82,16 @@ func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 	go sendFurther(refRespCh, reqRef, s.reference)
 	go sendFurther(expRespCh, reqExp, s.experiment)
 	
-	go returnReferenceResponse( doneCh, w, refRespCh, refResponse )
+	go func() {
+		refResponse = returnReferenceResponse( doneCh, w, refRespCh )
+	}()
 	
 	wg.Add(1)
-	go compareResponses( doneCh, wg, expRespCh, refResponse )
-
+	go func() {
+		<-doneCh
+		compareResponses( expRespCh, refResponse )
+		wg.Done()
+	}()
 	wg.Wait()
 }
 
@@ -98,24 +104,23 @@ func sendFurther(respChannel chan<- *http.Response, req *http.Request, url *url.
 	respChannel <- resp
 }
 
-func returnReferenceResponse( doneCh chan<- struct{}, w http.ResponseWriter, refRespCh <-chan *http.Response, refResponse *http.Response) {
-	refResponse = <-refRespCh
+func returnReferenceResponse( doneCh chan<- struct{}, w http.ResponseWriter, refRespCh chan *http.Response ) *http.Response {
+	refResponse := <-refRespCh
 	refBodyStr, err := jlog.BodyToString(refResponse.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
 	w.Write([]byte(refBodyStr))
-	
+
 	doneCh <- struct{}{}
+	return refResponse
 }
 
-func compareResponses( doneCh <-chan struct{}, wg sync.WaitGroup, expRespCh <-chan *http.Response, refResponse *http.Response ) {
-	<-doneCh
+func compareResponses( expRespCh <-chan *http.Response, refResponse *http.Response ) {
 	expResponse := <-expRespCh
-	
+
 	JL := jlog.New()
 	
-	fmt.Println(refResponse.Status)
 	out, err := JL.CompareResponses(refResponse, expResponse)
 	if err != nil {
 		log.Fatal(err)
@@ -123,10 +128,7 @@ func compareResponses( doneCh <-chan struct{}, wg sync.WaitGroup, expRespCh <-ch
 	
 	defer expResponse.Body.Close()
 	defer refResponse.Body.Close()
-	
 	ioutil.WriteFile("log.json", out, 0755)
-
-	wg.Done()
 }
 
 func makeChannels() (chan *http.Response, chan *http.Response, chan struct{}){
