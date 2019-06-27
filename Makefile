@@ -1,2 +1,8 @@
 dev:
-	docker-compose run -p 1234:1234 --use-aliases web-scientist-dev
+	./ci/web-scientist-dev.sh
+
+publish:
+	./ci/web-scientist-publish.sh
+
+build:
+	./ci/web-scientist-build.sh

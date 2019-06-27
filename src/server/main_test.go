@@ -1,4 +1,4 @@
-package serverTest
+package server_test
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/sprinteins/web-scientist/server"
-	. "github.com/sprinteins/web-scientist/server/testHelpers"
+	. "github.com/sprinteins/web-scientist/server/test_helpers"
 )
 
 const PROTOCOL = "http"
