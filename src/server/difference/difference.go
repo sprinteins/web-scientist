@@ -11,7 +11,7 @@ import (
 type Difference struct {
 	Status    map[string]string
 	Proto     map[string]string
-	Header    map[string]http.Response.Header
+	Header    map[string]header
 	Body      map[string]string
 	Identical equal
 }
@@ -23,14 +23,16 @@ type equal struct {
 	Header 	bool
 }
 
+type header map[string][]string
+
 // New _
 func New() *Difference {
 	return &Difference{
 		make(map[string]string),
 		make(map[string]string),
-		make(map[string]map[string][]string),
+		make(map[string]header),
 		make(map[string]string),
-		make(map[string]bool),
+		equal{false, false, false, false},
 	}
 }
 
@@ -54,7 +56,6 @@ func (JL *Difference) CompareResponses(refResp *http.Response, expResp *http.Res
 
 // BodyToString _
 func BodyToString(body io.ReadCloser) (string, error) {
-	defer body.Close()
 	payload, err := ioutil.ReadAll(body)
 	if err != nil {
 		return "", err
@@ -113,7 +114,7 @@ func (JL *Difference) compareHeader(headerA map[string][]string, headerB map[str
 
 	JL.Identical.Header = isIdentical
 
-	m := make(map[string]map[string][]string)
+	m := make(map[string]header)
 	m["RefResponse"] = headerA
 	m["ExpResponse"] = headerB
 	JL.Header = m
