@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"github.com/sprinteins/web-scientist/server/jlog"
+	"github.com/sprinteins/web-scientist/server/difference"
 )
 
 // Server _
@@ -83,8 +83,8 @@ func (s *Server) handle(w http.ResponseWriter, req *http.Request) {
 		log.Fatal(err)
 	}
 
-	JL := jlog.New()
-	out, _ := JL.CompareResponses(respA, respB)
+	diff := difference.New()
+	out, _ := diff.CompareResponses(respA, respB)
 	ioutil.WriteFile("log.json", out, 0755)
 
 }

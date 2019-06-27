@@ -1,4 +1,4 @@
-package jlog
+package difference
 
 import (
 	"encoding/json"
@@ -7,18 +7,25 @@ import (
 	"net/http"
 )
 
-// JLog _
-type JLog struct {
+// Difference _
+type Difference struct {
 	Status    map[string]string
 	Proto     map[string]string
-	Header    map[string]map[string][]string
+	Header    map[string]http.Response.Header
 	Body      map[string]string
-	Identical map[string]bool
+	Identical equal
+}
+
+type equal struct {
+	Status 	bool
+	Proto 	bool
+	Body 	bool
+	Header 	bool
 }
 
 // New _
-func New() *JLog {
-	return &JLog{
+func New() *Difference {
+	return &Difference{
 		make(map[string]string),
 		make(map[string]string),
 		make(map[string]map[string][]string),
@@ -28,12 +35,12 @@ func New() *JLog {
 }
 
 // CompareResponses _
-func (JL *JLog) CompareResponses(refResp *http.Response, expResp *http.Response) ([]byte, error) {
+func (JL *Difference) CompareResponses(refResp *http.Response, expResp *http.Response) ([]byte, error) {
 
-	JL.CompareStatus(refResp.Status, expResp.Status)
-	JL.CompareProto(refResp.Proto, expResp.Proto)
-	JL.CompareHeader(refResp.Header, expResp.Header)
-	err := JL.CompareBody(refResp.Body, expResp.Body)
+	JL.compareStatus(refResp.Status, expResp.Status)
+	JL.compareProto(refResp.Proto, expResp.Proto)
+	JL.compareHeader(refResp.Header, expResp.Header)
+	err := JL.compareBody(refResp.Body, expResp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -57,12 +64,12 @@ func BodyToString(body io.ReadCloser) (string, error) {
 }
 
 // CompareStatus _
-func (JL *JLog) CompareStatus(statusA string, statusB string) {
+func (JL *Difference) compareStatus(statusA string, statusB string) {
 
 	if statusA == statusB {
-		JL.Identical["Status"] = true
+		JL.Identical.Status = true
 	} else {
-		JL.Identical["Status"] = false
+		JL.Identical.Status = false
 	}
 
 	m := make(map[string]string)
@@ -72,11 +79,11 @@ func (JL *JLog) CompareStatus(statusA string, statusB string) {
 }
 
 // CompareProto _
-func (JL *JLog) CompareProto(protoA string, protoB string) {
+func (JL *Difference) compareProto(protoA string, protoB string) {
 	if protoA == protoB {
-		JL.Identical["Proto"] = true
+		JL.Identical.Proto = true
 	} else {
-		JL.Identical["Proto"] = false
+		JL.Identical.Proto = false
 	}
 
 	m := make(map[string]string)
@@ -86,7 +93,7 @@ func (JL *JLog) CompareProto(protoA string, protoB string) {
 }
 
 // CompareHeader _
-func (JL *JLog) CompareHeader(headerA map[string][]string, headerB map[string][]string) {
+func (JL *Difference) compareHeader(headerA map[string][]string, headerB map[string][]string) {
 
 	isIdentical := true
 
@@ -104,7 +111,7 @@ func (JL *JLog) CompareHeader(headerA map[string][]string, headerB map[string][]
 		}
 	}
 
-	JL.Identical["Header"] = isIdentical
+	JL.Identical.Header = isIdentical
 
 	m := make(map[string]map[string][]string)
 	m["RefResponse"] = headerA
@@ -113,7 +120,7 @@ func (JL *JLog) CompareHeader(headerA map[string][]string, headerB map[string][]
 }
 
 // CompareBody _
-func (JL *JLog) CompareBody(bodyA io.ReadCloser, bodyB io.ReadCloser) error {
+func (JL *Difference) compareBody(bodyA io.ReadCloser, bodyB io.ReadCloser) error {
 	bodyAStr, err := BodyToString(bodyA)
 	if err != nil {
 		return err
@@ -125,9 +132,9 @@ func (JL *JLog) CompareBody(bodyA io.ReadCloser, bodyB io.ReadCloser) error {
 	}
 
 	if bodyAStr == bodyBStr {
-		JL.Identical["Body"] = true
+		JL.Identical.Body = true
 	} else {
-		JL.Identical["Body"] = false
+		JL.Identical.Body = false
 	}
 
 	m := make(map[string]string)
