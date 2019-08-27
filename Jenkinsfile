@@ -3,14 +3,12 @@ pipeline {
     stages {
         stage('Installation') {
             steps {
-                sh 'cd src'
-                sh 'go get'
+                sh 'cd src && go get'
             }
         }
         stage('Test') {
             steps {
-                sh 'cd server'
-                sh 'go test'
+                sh 'cd src/server && go test'
             }
         }
     }
