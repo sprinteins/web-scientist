@@ -3,7 +3,8 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'sudo cd src/server && sudo go test'
+                sh 'apt-get install sudo'
+                sh 'cd src/server && sudo go test'
             }
         }
     }
