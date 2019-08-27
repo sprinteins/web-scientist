@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                sh 'cd src/server && go test'
+                sh 'sudo cd src/server && sudo go test'
             }
         }
     }
