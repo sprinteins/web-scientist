@@ -14,6 +14,7 @@ pipeline {
         stage('Test') {
             steps {
                 dir("src/server") {
+                    sh 'ls ../../tmp'
                     sh 'go test'
                 }
             }
