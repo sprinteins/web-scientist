@@ -27,7 +27,6 @@ func TestMain(m *testing.M) {
 func setup() {
 	scientist = server.New(HOST, PORT)
 	go scientist.Start()
-	time.Sleep(2 * time.Second)
 
 }
 
