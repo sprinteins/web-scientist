@@ -1,15 +1,17 @@
 pipeline {
     agent { docker { image 'golang' } }
     stages {
-        withEnv(['GOPATH=${PWD}/server']) {
+        dir("src")
             stage('Setup') {
                 steps {
                     sh 'go get'
                 }
             }
-            stage('Test') {
-                steps {
-                    sh 'go version'
+            dir("server") {
+                stage('Test') {
+                    steps {
+                        sh 'go test'
+                    }
                 }
             }
         }
