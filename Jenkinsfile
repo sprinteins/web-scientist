@@ -1,13 +1,9 @@
 pipeline {
     agent { docker { image 'golang' } }
+    environment {
+        XDG_CACHE_HOME = "${GOPATH}/tmp/"
+    }
     stages {
-        stage("Initialize") {
-            steps {
-                dir("/.cache/go-build") {
-                    sh 'pwd'
-                }
-            }
-        }
         stage('Test') {
             steps {
                 dir("src/server") {
