@@ -8,6 +8,8 @@ pipeline {
             steps {
                 dir("src") {
                     sh 'go mod download'
+                    sh 'go get'
+                    sh 'go build'
                 }
             }
         }
