@@ -14,7 +14,7 @@ pipeline {
         stage('Test') {
             steps {
                 dir("src/server") {
-                    sh 'ls ${XDG_CACHE_HOME}'
+                    sh 'ls ${XDG_CACHE_HOME}/go-build'
                     sh 'go test'
                 }
             }
