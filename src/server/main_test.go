@@ -26,7 +26,8 @@ func TestMain(m *testing.M) {
 
 func setup() {
 	scientist = server.New(HOST, PORT)
-	scientist.Start()
+	go scientist.Start()
+
 }
 
 func teardown() {
