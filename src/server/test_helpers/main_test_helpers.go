@@ -50,8 +50,8 @@ func ToLowerCase(text string) string {
 
 // CreateEqualMocks _
 func CreateEqualMocks() (reference *mock.Mock, experiment *mock.Mock) {
-	reference = mock.New("localhost", "9999", 0)
-	experiment = mock.New("localhost", "9998", 10)
+	reference = mock.New("localhost", "9997", 0)
+	experiment = mock.New("localhost", "9996", 10)
 
 	go reference.Start(nil)
 	go experiment.Start(nil)

@@ -47,8 +47,8 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 	var resp, err = http.Post(scientist.Address(), "text/plain", bytes.NewBuffer(payload))
 	Ok(t, err)
 
-	var header = resp.Header.Get("X-web-scientist-type")
-	Equals(t, "reference", header)
+	var header = resp.Header.Get("X-WebScientist")
+	Equals(t, "WebScientist", header)
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
@@ -75,8 +75,8 @@ func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 	var resp, err = http.Post(scientist.Address(), "text/plain", bytes.NewBuffer(payload))
 	Ok(t, err)
 
-	var header = resp.Header.Get("X-web-scientist-type")
-	Equals(t, "experiment", header)
+	var header = resp.Header.Get("X-WebScientist")
+	Equals(t, "WebScientist", header)
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
