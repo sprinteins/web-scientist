@@ -3,9 +3,8 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
-                dir("/.cache/go-build") {
-                    sh 'pwd'
-                }
+                sh 'pwd'
+                dir("/.cache/go-build")
                 dir("src") {
                     sh 'pwd'
                     sh 'go get'
