@@ -9,8 +9,8 @@ pipeline {
             }
         }
         stage('Test') {
-            dir("server") {
-                steps {
+            steps {
+                dir("server") {
                     sh 'go test'
                 }
             }
