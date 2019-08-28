@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"testing"
-	"time"
 	"github.com/sprinteins/web-scientist/server"
 	. "github.com/sprinteins/web-scientist/server/test_helpers"
 )
