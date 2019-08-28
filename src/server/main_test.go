@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 	"time"
-	"github.com/sprinteins/web-scientist/server"
+	"src/server"
 	. "github.com/sprinteins/web-scientist/server/test_helpers"
 )
 
