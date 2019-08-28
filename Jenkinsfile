@@ -1,9 +1,9 @@
 pipeline {
     agent { docker { image 'golang' } }
     stages {
-        stage('Setup') {
+        stage("Initialize") {
             steps {
-                dir("test") {
+                dir("/.cache/go-build") {
                     sh 'pwd'
                 }
             }
