@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
-
+	"time"
 	"github.com/sprinteins/web-scientist/server"
 	. "github.com/sprinteins/web-scientist/server/test_helpers"
 )
@@ -27,6 +27,7 @@ func TestMain(m *testing.M) {
 func setup() {
 	scientist = server.New(HOST, PORT)
 	go scientist.Start()
+	time.Sleep(2 * time.Second)
 
 }
 
