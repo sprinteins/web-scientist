@@ -4,17 +4,9 @@ pipeline {
         XDG_CACHE_HOME = "tmp"
     }
     stages {
-        stage('Initialize') {
-            steps {
-                dir("src") {
-                    sh 'go get'
-                }
-            }
-        }
         stage('Test') {
             steps {
                 dir("src/server") {
-                    sh 'go get'
                     sh 'go test'
                 }
             }
