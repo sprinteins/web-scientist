@@ -15,6 +15,7 @@ pipeline {
         }
         stage('Test') {
             steps {
+                sh 'ls tmp/go-build/70'
                 dir("src/server") {
                     sh 'go test'
                 }
