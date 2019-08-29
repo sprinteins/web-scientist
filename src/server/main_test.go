@@ -50,33 +50,6 @@ func teardown() {
 
 func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 
-	active := true
-	tryConnect := 0
-	timeout := time.Duration(1 * time.Second)
-	for active {
-		_, err := net.DialTimeout("tcp","localhost:9996", timeout)
-		if err != nil {
-			active = false
-		}
-		if tryConnect > 10 {
-			panic("Experimental port already in use.")
-		}
-		tryConnect++
-	}
-	
-	tryConnect = 0
-	for active {
-		_, err := net.DialTimeout("tcp","localhost:9997", timeout)
-		if err != nil {
-			active = false
-			panic("Reference port already in use")
-		}
-		if tryConnect > 10 {
-			panic("Reference port already in use")
-		}
-		tryConnect++
-	}
-
 	var reference, experiment = CreateNonEqualMocks()
 
 	scientist.SetReference(reference.Address())
@@ -104,32 +77,6 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 }
 
 func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
-	
-	active := true
-	tryConnect := 0
-	timeout := time.Duration(1 * time.Second)
-	for !active {
-		_, err := net.DialTimeout("tcp","localhost:9998", timeout)
-		if err != nil {
-			active = false
-		}
-		if tryConnect > 10 {
-			panic("Experimental port already in use.")
-		}
-		tryConnect++
-	}
-	
-	tryConnect = 0
-	for !active {
-		_, err := net.DialTimeout("tcp","localhost:9999", timeout)
-		if err != nil {
-			active = false
-		}
-		if tryConnect > 10 {
-			panic("Reference port already in use")
-		}
-		tryConnect++
-	}
 	
 	var reference, experiment = CreateEqualMocks()
 
