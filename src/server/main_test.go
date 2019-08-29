@@ -56,7 +56,7 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
 	
-	time.Sleep( 30 * time.Second() )
+	time.Sleep( 30 * time.Second )
 
 	var message = "TeSt"
 	var payload = []byte(message)
@@ -86,8 +86,8 @@ func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
 	
-	time.Sleep( 30 * time.Second() )
-	
+	time.Sleep( 30 * time.Second )
+
 	var message = "TeSt"
 	var payload = []byte(message)
 
