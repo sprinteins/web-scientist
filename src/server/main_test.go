@@ -29,10 +29,18 @@ func setup() {
 	scientist = server.New(HOST, PORT)
 	go scientist.Start()
 
-	timeout := time.Duration(3 * time.Second)
-	_, err := net.DialTimeout("tcp","localhost:2345", timeout)
-	if err != nil {
-		panic(err)
+	active := false
+	tryConnect := 0
+	timeout := time.Duration(1 * time.Second)
+	for active {
+		_, err := net.DialTimeout("tcp","localhost:2345", timeout)
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 10 {
+			panic("Web-Scientist cannot be reached.")
+		}
+		tryConnect++
 	}
 }
 
