@@ -49,20 +49,21 @@ func teardown() {
 }
 
 func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
-
+	
+	
 	var reference, experiment = CreateNonEqualMocks()
-
+	
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
+	
+	time.Sleep( 30 * time.Second() )
 
 	var message = "TeSt"
 	var payload = []byte(message)
-
 	
 	var resp, err = http.Post(scientist.Address(), "text/plain", bytes.NewBuffer(payload))
 	Ok(t, err)
-	panic("We are here")
-	
+
 	var header = resp.Header.Get("X-WebScientist")
 	Equals(t, "WebScientist", header)
 
@@ -81,10 +82,12 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 	
 	var reference, experiment = CreateEqualMocks()
-
+	
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
-
+	
+	time.Sleep( 30 * time.Second() )
+	
 	var message = "TeSt"
 	var payload = []byte(message)
 
