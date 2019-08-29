@@ -32,7 +32,7 @@ func setup() {
 	active := false
 	tryConnect := 0
 	timeout := time.Duration(1 * time.Second)
-	for active {
+	for !active {
 		_, err := net.DialTimeout("tcp","localhost:2345", timeout)
 		if err == nil {
 			active = true
