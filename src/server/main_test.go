@@ -50,9 +50,33 @@ func teardown() {
 
 func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 
-	time.Sleep(3 * time.Second)
-	
 	var reference, experiment = CreateNonEqualMocks()
+
+	active := false
+	tryConnect := 0
+	timeout := time.Duration(1 * time.Second)
+	for active {
+		_, err := net.DialTimeout("tcp","localhost:9998", timeout)
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 10 {
+			panic("Experimental cannot be reached.")
+		}
+		tryConnect++
+	}
+	
+	tryConnect = 0
+	for active {
+		_, err := net.DialTimeout("tcp","localhost:9999", timeout)
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 10 {
+			panic("Reference cannot be reached.")
+		}
+		tryConnect++
+	}
 
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
@@ -79,10 +103,34 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 }
 
 func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
-	
-	time.Sleep(3 * time.Second)
 
 	var reference, experiment = CreateEqualMocks()
+
+	active := false
+	tryConnect := 0
+	timeout := time.Duration(1 * time.Second)
+	for active {
+		_, err := net.DialTimeout("tcp","localhost:9998", timeout)
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 10 {
+			panic("Experimental cannot be reached.")
+		}
+		tryConnect++
+	}
+	
+	tryConnect = 0
+	for active {
+		_, err := net.DialTimeout("tcp","localhost:9999", timeout)
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 10 {
+			panic("Reference cannot be reached.")
+		}
+		tryConnect++
+	}
 
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
