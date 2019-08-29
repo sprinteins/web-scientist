@@ -58,6 +58,8 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 	var message = "TeSt"
 	var payload = []byte(message)
 
+	panic("We are here")
+
 	var resp, err = http.Post(scientist.Address(), "text/plain", bytes.NewBuffer(payload))
 	Ok(t, err)
 
