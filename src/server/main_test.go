@@ -53,7 +53,7 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 	active := true
 	tryConnect := 0
 	timeout := time.Duration(1 * time.Second)
-	for !active {
+	for active {
 		_, err := net.DialTimeout("tcp","localhost:9996", timeout)
 		if err != nil {
 			active = false
@@ -65,7 +65,7 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 	}
 	
 	tryConnect = 0
-	for !active {
+	for active {
 		_, err := net.DialTimeout("tcp","localhost:9997", timeout)
 		if err != nil {
 			active = false
