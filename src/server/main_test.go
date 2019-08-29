@@ -7,6 +7,7 @@ import (
 	"os"
 	"testing"
 	"time"
+	"net"
 	"github.com/sprinteins/web-scientist/server"
 	. "github.com/sprinteins/web-scientist/server/test_helpers"
 )
@@ -27,7 +28,12 @@ func TestMain(m *testing.M) {
 func setup() {
 	scientist = server.New(HOST, PORT)
 	go scientist.Start()
-	time.Sleep(1*time.Second)
+
+	timeout := time.Duration(1 * time.Second)
+	_, err := net.DialTimeout("tcp","localhost:2345", timeout)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func teardown() {
@@ -37,6 +43,8 @@ func teardown() {
 func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 
 	var reference, experiment = CreateNonEqualMocks()
+
+	time.Sleep(1 * time.Second)
 
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
@@ -65,6 +73,8 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 
 	var reference, experiment = CreateEqualMocks()
+
+	time.Sleep(1 * time.Second)
 
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
