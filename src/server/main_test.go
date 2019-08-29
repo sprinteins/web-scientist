@@ -50,33 +50,33 @@ func teardown() {
 
 func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 
-	var reference, experiment = CreateNonEqualMocks()
-
-	active := false
+	active := true
 	tryConnect := 0
 	timeout := time.Duration(1 * time.Second)
-	for active {
+	for !active {
 		_, err := net.DialTimeout("tcp","localhost:9998", timeout)
-		if err == nil {
-			active = true
+		if err != nil {
+			active = false
 		}
 		if tryConnect > 10 {
-			panic("Experimental cannot be reached.")
+			panic("Experimental port already in use.")
 		}
 		tryConnect++
 	}
 	
 	tryConnect = 0
-	for active {
+	for !active {
 		_, err := net.DialTimeout("tcp","localhost:9999", timeout)
-		if err == nil {
-			active = true
+		if err != nil {
+			active = false
 		}
 		if tryConnect > 10 {
-			panic("Reference cannot be reached.")
+			panic("Reference port already in use")
 		}
 		tryConnect++
 	}
+
+	var reference, experiment = CreateNonEqualMocks()
 
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
@@ -103,34 +103,34 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 }
 
 func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
-
-	var reference, experiment = CreateEqualMocks()
-
-	active := false
+	
+	active := true
 	tryConnect := 0
 	timeout := time.Duration(1 * time.Second)
-	for active {
+	for !active {
 		_, err := net.DialTimeout("tcp","localhost:9998", timeout)
-		if err == nil {
-			active = true
+		if err != nil {
+			active = false
 		}
 		if tryConnect > 10 {
-			panic("Experimental cannot be reached.")
+			panic("Experimental port already in use.")
 		}
 		tryConnect++
 	}
 	
 	tryConnect = 0
-	for active {
+	for !active {
 		_, err := net.DialTimeout("tcp","localhost:9999", timeout)
-		if err == nil {
-			active = true
+		if err != nil {
+			active = false
 		}
 		if tryConnect > 10 {
-			panic("Reference cannot be reached.")
+			panic("Reference port already in use")
 		}
 		tryConnect++
 	}
+	
+	var reference, experiment = CreateEqualMocks()
 
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
