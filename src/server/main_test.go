@@ -50,7 +50,7 @@ func teardown() {
 
 func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 	
 	var reference, experiment = CreateNonEqualMocks()
 
@@ -80,7 +80,7 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 
 func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 	
-	time.Sleep(1 * time.Second)
+	time.Sleep(3 * time.Second)
 
 	var reference, experiment = CreateEqualMocks()
 
