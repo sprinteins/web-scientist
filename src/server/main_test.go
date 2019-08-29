@@ -69,6 +69,7 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 		_, err := net.DialTimeout("tcp","localhost:9997", timeout)
 		if err != nil {
 			active = false
+			panic("Reference port already in use")
 		}
 		if tryConnect > 10 {
 			panic("Reference port already in use")
