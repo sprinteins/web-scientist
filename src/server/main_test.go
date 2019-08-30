@@ -31,16 +31,18 @@ func setup() {
 
 	active := false
 	tryConnect := 0
-	timeout := time.Duration(1 * time.Second)
 	for !active {
-		_, err := net.DialTimeout("tcp","localhost:2345", timeout)
+		conn, err := net.Dial("tcp","localhost:2345")
 		if err == nil {
 			active = true
 		}
-		if tryConnect > 10 {
+		if tryConnect > 20 {
 			panic("Web-Scientist cannot be reached.")
 		}
 		tryConnect++
+		time.Sleep( 1 * time.Second )
+		
+		conn.Close()
 	}
 }
 
@@ -50,13 +52,41 @@ func teardown() {
 
 func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 	
-	
 	var reference, experiment = CreateNonEqualMocks()
 	
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
 	
-	time.Sleep( 10 * time.Second )
+
+	active := false
+	tryConnect := 0
+	for !active {
+		conn, err := net.Dial("tcp","localhost:9996")
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 20 {
+			panic("Reference cannot be reached")
+		}
+		tryConnect++
+		time.Sleep( 1 * time.Second )
+		conn.Close()
+	}
+	
+	active = false
+	tryConnect = 0
+	for !active {
+		conn, err := net.Dial("tcp","localhost:9997")
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 20 {
+			panic("Experimental cannot be reached")
+		}
+		tryConnect++
+		time.Sleep( 1 * time.Second )
+		conn.Close()
+	}
 
 	var message = "TeSt"
 	var payload = []byte(message)
@@ -86,7 +116,35 @@ func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
 	
-	time.Sleep( 10 * time.Second )
+	active := false
+	tryConnect := 0
+	for !active {
+		conn, err := net.Dial("tcp","localhost:9998")
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 20 {
+			panic("Reference cannot be reached")
+		}
+		tryConnect++
+		time.Sleep( 1 * time.Second )
+		conn.Close()
+	}
+
+	active = false
+	tryConnect = 0
+	for !active {
+		conn, err := net.Dial("tcp","localhost:9999")
+		if err == nil {
+			active = true
+		}
+		if tryConnect > 20 {
+			panic("Experimental cannot be reached")
+		}
+		tryConnect++
+		time.Sleep( 1 * time.Second )
+		conn.Close()
+	}
 
 	var message = "TeSt"
 	var payload = []byte(message)
