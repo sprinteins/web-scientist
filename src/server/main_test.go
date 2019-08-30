@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"testing"
-	"fmt"
 	"time"
 	"net"
 	"github.com/sprinteins/web-scientist/server"
