@@ -58,11 +58,11 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
 	
-	fmt.Print("Testing experimental connection in failed test.")
 	active := false
 	tryConnect := 0
 	for !active {
 		conn, err := net.Dial("tcp","localhost:9996")
+		fmt.Print("Testing experimental connection in failed test.\n\n")
 		if err == nil {
 			active = true
 		}
@@ -119,12 +119,12 @@ func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
 	
-
-	fmt.Print("Testing experimental connection in succ test.")
 	active := false
 	tryConnect := 0
 	for !active {
 		conn, err := net.Dial("tcp","localhost:9998")
+
+		fmt.Print("Testing experimental connection in succ test.\n\n")
 		if err == nil {
 			active = true
 		}
