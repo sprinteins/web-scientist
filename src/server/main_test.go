@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"fmt"
 	"time"
 	"net"
 	"github.com/sprinteins/web-scientist/server"
@@ -57,7 +58,7 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
 	
-
+	fmt.Print("Testing experimental connection in failed test.")
 	active := false
 	tryConnect := 0
 	for !active {
@@ -73,6 +74,8 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 		conn.Close()
 	}
 	
+
+	fmt.Print("Testing reference connection in failed test.")
 	active = false
 	tryConnect = 0
 	for !active {
@@ -116,6 +119,8 @@ func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 	scientist.SetReference(reference.Address())
 	scientist.SetExperiment(experiment.Address())
 	
+
+	fmt.Print("Testing experimental connection in succ test.")
 	active := false
 	tryConnect := 0
 	for !active {
@@ -131,6 +136,8 @@ func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 		conn.Close()
 	}
 
+
+	fmt.Print("Testing reference connection in succ test.")
 	active = false
 	tryConnect = 0
 	for !active {
