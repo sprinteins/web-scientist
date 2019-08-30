@@ -42,8 +42,9 @@ func setup() {
 		}
 		tryConnect++
 		time.Sleep( 1 * time.Second )
-		
-		conn.Close()
+		if conn != nil {
+			conn.Close()
+		}
 	}
 }
 
@@ -71,7 +72,9 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 		}
 		tryConnect++
 		time.Sleep( 1 * time.Second )
-		conn.Close()
+		if conn != nil {
+			conn.Close()
+		}
 	}
 	
 
@@ -88,7 +91,9 @@ func Test_By_Failed_Experiment_Reference_Sent(t *testing.T) {
 		}
 		tryConnect++
 		time.Sleep( 1 * time.Second )
-		conn.Close()
+		if conn != nil {
+			conn.Close()
+		}
 	}
 
 	var message = "TeSt"
@@ -133,7 +138,9 @@ func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 		}
 		tryConnect++
 		time.Sleep( 1 * time.Second )
-		conn.Close()
+		if conn != nil {
+			conn.Close()
+		}
 	}
 
 
@@ -150,7 +157,9 @@ func Test_By_Successfull_Experiment_Experiment_Sent(t *testing.T) {
 		}
 		tryConnect++
 		time.Sleep( 1 * time.Second )
-		conn.Close()
+		if conn != nil {
+			conn.Close()
+		}
 	}
 
 	var message = "TeSt"
